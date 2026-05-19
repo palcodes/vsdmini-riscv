@@ -25,7 +25,7 @@ int main() {
         uart_send_string(buf);
         uart_send_string("\r\n");
         gpio_toggle();
-        for (volatile int i = 0; i < 100000; i++);
+        for (volatile int i = 0; i < 500000; i++);
     }
 
     return 0;

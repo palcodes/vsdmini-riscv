@@ -10,27 +10,28 @@ void gpio_init()
     GPIOD_CFGLR |= (0x3 << (LED_PIN * 4));
 }
 
-// Set the GPIO pin high
+// Turn LED ON (active low — drive pin LOW)
 void gpio_set()
 {
-    GPIOD_BSHR = (1 << LED_PIN); // Set the pin high
+    GPIOD_BCR = (1 << LED_PIN);
 }
 
-// Set the GPIO pin low
+// Turn LED OFF (drive pin HIGH)
 void gpio_clear()
 {
-    GPIOD_BCR = (1 << LED_PIN); // Set the pin low
+    GPIOD_BSHR = (1 << LED_PIN);
 }
+
 
 // Toggle the GPIO pin
 void gpio_toggle()
 {
     if (GPIOD_OUTDR & (1 << LED_PIN))
     {
-        gpio_clear(); // If the pin is high, set it low
+        gpio_set();
     }
     else
     {
-        gpio_set(); // If the pin is low, set it high
+        gpio_clear();
     }
 }
