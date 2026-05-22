@@ -1,0 +1,661 @@
+
+app/main.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .init:
+
+00000000 <InterruptVector>:
+	void InterruptVector()         __attribute__((naked)) __attribute((section(".init"))) __attribute((weak,alias("InterruptVectorDefault"))) __attribute((naked));
+	void InterruptVectorDefault()  __attribute__((naked)) __attribute((section(".init"))) __attribute((naked));
+	void InterruptVectorDefault( void )
+	{
+		#if !defined(FUNCONF_TINYVECTOR) || !FUNCONF_TINYVECTOR
+			asm volatile( DEFAULT_INTERRUPT_VECTOR_CONTENTS );
+   0:	1a80006f          	j	1a8 <handle_reset>
+   4:	00000000          	.word	0x00000000
+   8:	00000268          	.word	0x00000268
+   c:	0000021c          	.word	0x0000021c
+	...
+  30:	0000021c          	.word	0x0000021c
+  34:	00000000          	.word	0x00000000
+  38:	0000021c          	.word	0x0000021c
+  3c:	00000000          	.word	0x00000000
+  40:	0000021c          	.word	0x0000021c
+  44:	0000021c          	.word	0x0000021c
+  48:	0000021c          	.word	0x0000021c
+  4c:	0000021c          	.word	0x0000021c
+  50:	0000021c          	.word	0x0000021c
+  54:	0000021c          	.word	0x0000021c
+  58:	0000021c          	.word	0x0000021c
+  5c:	0000021c          	.word	0x0000021c
+  60:	0000021c          	.word	0x0000021c
+  64:	0000021c          	.word	0x0000021c
+  68:	0000021c          	.word	0x0000021c
+  6c:	0000021c          	.word	0x0000021c
+  70:	0000021c          	.word	0x0000021c
+  74:	0000021c          	.word	0x0000021c
+  78:	0000021c          	.word	0x0000021c
+  7c:	0000021c          	.word	0x0000021c
+  80:	0000021c          	.word	0x0000021c
+  84:	0000021c          	.word	0x0000021c
+  88:	0000021c          	.word	0x0000021c
+  8c:	0000021c          	.word	0x0000021c
+  90:	0000021c          	.word	0x0000021c
+  94:	0000021c          	.word	0x0000021c
+  98:	0000042c          	.word	0x0000042c
+  9c:	0001                	nop
+	...
+
+Disassembly of section .text:
+
+000000a0 <__divsi3>:
+  a0:	02054e63          	bltz	a0,dc <__umodsi3+0x8>
+  a4:	0405c363          	bltz	a1,ea <__umodsi3+0x16>
+
+000000a8 <__hidden___udivsi3>:
+  a8:	862e                	mv	a2,a1
+  aa:	85aa                	mv	a1,a0
+  ac:	557d                	li	a0,-1
+  ae:	c215                	beqz	a2,d2 <__hidden___udivsi3+0x2a>
+  b0:	4685                	li	a3,1
+  b2:	00b67863          	bgeu	a2,a1,c2 <__hidden___udivsi3+0x1a>
+  b6:	00c05663          	blez	a2,c2 <__hidden___udivsi3+0x1a>
+  ba:	0606                	slli	a2,a2,0x1
+  bc:	0686                	slli	a3,a3,0x1
+  be:	feb66ce3          	bltu	a2,a1,b6 <__hidden___udivsi3+0xe>
+  c2:	4501                	li	a0,0
+  c4:	00c5e463          	bltu	a1,a2,cc <__hidden___udivsi3+0x24>
+  c8:	8d91                	sub	a1,a1,a2
+  ca:	8d55                	or	a0,a0,a3
+  cc:	8285                	srli	a3,a3,0x1
+  ce:	8205                	srli	a2,a2,0x1
+  d0:	faf5                	bnez	a3,c4 <__hidden___udivsi3+0x1c>
+  d2:	8082                	ret
+
+000000d4 <__umodsi3>:
+  d4:	8286                	mv	t0,ra
+  d6:	3fc9                	jal	a8 <__hidden___udivsi3>
+  d8:	852e                	mv	a0,a1
+  da:	8282                	jr	t0
+  dc:	40a00533          	neg	a0,a0
+  e0:	00b04763          	bgtz	a1,ee <__umodsi3+0x1a>
+  e4:	40b005b3          	neg	a1,a1
+  e8:	b7c1                	j	a8 <__hidden___udivsi3>
+  ea:	40b005b3          	neg	a1,a1
+  ee:	8286                	mv	t0,ra
+  f0:	3f65                	jal	a8 <__hidden___udivsi3>
+  f2:	40a00533          	neg	a0,a0
+  f6:	8282                	jr	t0
+
+000000f8 <__modsi3>:
+  f8:	8286                	mv	t0,ra
+  fa:	0005c763          	bltz	a1,108 <__modsi3+0x10>
+  fe:	00054963          	bltz	a0,110 <__modsi3+0x18>
+ 102:	375d                	jal	a8 <__hidden___udivsi3>
+ 104:	852e                	mv	a0,a1
+ 106:	8282                	jr	t0
+ 108:	40b005b3          	neg	a1,a1
+ 10c:	fe055be3          	bgez	a0,102 <__modsi3+0xa>
+ 110:	40a00533          	neg	a0,a0
+ 114:	3f51                	jal	a8 <__hidden___udivsi3>
+ 116:	40b00533          	neg	a0,a1
+ 11a:	8282                	jr	t0
+	...
+
+0000011e <PrintHex>:
+	while( (*DMDATA0) & 0x80 );
+ 11e:	e00007b7          	lui	a5,0xe0000
+ 122:	0f478793          	addi	a5,a5,244 # e00000f4 <_eusrstack+0xbffff8f4>
+ 126:	4398                	lw	a4,0(a5)
+ 128:	08077713          	andi	a4,a4,128
+ 12c:	ff6d                	bnez	a4,126 <PrintHex+0x8>
+	*DMDATA0 = 0x78302088; //" 0x"
+ 12e:	78302737          	lui	a4,0x78302
+ 132:	08870713          	addi	a4,a4,136 # 78302088 <_eusrstack+0x58301888>
+		while( (*DMDATA0) & 0x80 );
+ 136:	e00006b7          	lui	a3,0xe0000
+	*DMDATA0 = 0x78302088; //" 0x"
+ 13a:	c398                	sw	a4,0(a5)
+		while( (*DMDATA0) & 0x80 );
+ 13c:	0f468693          	addi	a3,a3,244 # e00000f4 <_eusrstack+0xbffff8f4>
+	for( shift = 28; shift >= 0; shift -= 4 )
+ 140:	4771                	li	a4,28
+		s += ( s < 10 ) ? '0' : ('a' - 10);
+ 142:	45a5                	li	a1,9
+	for( shift = 28; shift >= 0; shift -= 4 )
+ 144:	5671                	li	a2,-4
+		while( (*DMDATA0) & 0x80 );
+ 146:	429c                	lw	a5,0(a3)
+ 148:	0807f793          	andi	a5,a5,128
+ 14c:	ffed                	bnez	a5,146 <PrintHex+0x28>
+		int s = (n>>shift) & 0xf;
+ 14e:	00e55333          	srl	t1,a0,a4
+ 152:	00f37313          	andi	t1,t1,15
+		s += ( s < 10 ) ? '0' : ('a' - 10);
+ 156:	0065b7b3          	sltu	a5,a1,t1
+ 15a:	40f007b3          	neg	a5,a5
+ 15e:	0277f793          	andi	a5,a5,39
+ 162:	03078793          	addi	a5,a5,48
+ 166:	979a                	add	a5,a5,t1
+		*DMDATA0 = 0x85 | (s<<8); //" 0x"
+ 168:	07a2                	slli	a5,a5,0x8
+ 16a:	0857e793          	ori	a5,a5,133
+ 16e:	c29c                	sw	a5,0(a3)
+	for( shift = 28; shift >= 0; shift -= 4 )
+ 170:	1771                	addi	a4,a4,-4
+ 172:	fcc71ae3          	bne	a4,a2,146 <PrintHex+0x28>
+}
+ 176:	8082                	ret
+
+00000178 <uart_send_char>:
+    USART1->CTLR1 |= USART_CTLR1_TE | USART_CTLR1_UE;
+}
+
+void uart_send_char(char c)
+{
+    while (!(USART1->STATR & USART_STATR_TXE))
+ 178:	400147b7          	lui	a5,0x40014
+ 17c:	80078793          	addi	a5,a5,-2048 # 40013800 <_eusrstack+0x20013000>
+ 180:	4398                	lw	a4,0(a5)
+ 182:	08077713          	andi	a4,a4,128
+ 186:	df6d                	beqz	a4,180 <uart_send_char+0x8>
+        ;
+    USART1->DATAR = c;
+ 188:	c3c8                	sw	a0,4(a5)
+}
+ 18a:	8082                	ret
+
+0000018c <uart_send_string>:
+
+void uart_send_string(const char *s)
+{
+ 18c:	1161                	addi	sp,sp,-8
+ 18e:	c022                	sw	s0,0(sp)
+ 190:	c206                	sw	ra,4(sp)
+ 192:	842a                	mv	s0,a0
+    while (*s)
+ 194:	00044503          	lbu	a0,0(s0)
+ 198:	e509                	bnez	a0,1a2 <uart_send_string+0x16>
+    {
+        uart_send_char(*s++);
+    }
+}
+ 19a:	4092                	lw	ra,4(sp)
+ 19c:	4402                	lw	s0,0(sp)
+ 19e:	0121                	addi	sp,sp,8
+ 1a0:	8082                	ret
+        uart_send_char(*s++);
+ 1a2:	0405                	addi	s0,s0,1
+ 1a4:	3fd1                	jal	178 <uart_send_char>
+ 1a6:	b7fd                	j	194 <uart_send_string+0x8>
+
+000001a8 <handle_reset>:
+
+#if defined( CH32V003 ) || defined( CH32X03x ) || defined(CH32V00x)
+
+void handle_reset( void )
+{
+	asm volatile( "\n\
+ 1a8:	20000197          	auipc	gp,0x20000
+ 1ac:	25418193          	addi	gp,gp,596 # 200003fc <__global_pointer$>
+ 1b0:	20000117          	auipc	sp,0x20000
+ 1b4:	65010113          	addi	sp,sp,1616 # 20000800 <_eusrstack>
+ 1b8:	6509                	lui	a0,0x2
+ 1ba:	88050513          	addi	a0,a0,-1920 # 1880 <ch32fun.c.92011189+0x688>
+ 1be:	30051073          	csrw	mstatus,a0
+ 1c2:	468d                	li	a3,3
+ 1c4:	00000517          	auipc	a0,0x0
+ 1c8:	e3c50513          	addi	a0,a0,-452 # 0 <InterruptVector>
+ 1cc:	8d55                	or	a0,a0,a3
+ 1ce:	30551073          	csrw	mtvec,a0
+	csrw mtvec, a0\n" 
+	: : : "a0", "a3", "memory");
+
+	// Careful: Use registers to prevent overwriting of self-data.
+	// This clears out BSS.
+asm volatile(
+ 1d2:	c0418513          	addi	a0,gp,-1020 # 20000000 <ticks>
+ 1d6:	20000597          	auipc	a1,0x20000
+ 1da:	e2e58593          	addi	a1,a1,-466 # 20000004 <_ebss>
+ 1de:	4601                	li	a2,0
+ 1e0:	00b55663          	bge	a0,a1,1ec <handle_reset+0x44>
+ 1e4:	c110                	sw	a2,0(a0)
+ 1e6:	0511                	addi	a0,a0,4
+ 1e8:	feb54ee3          	blt	a0,a1,1e4 <handle_reset+0x3c>
+ 1ec:	49000513          	li	a0,1168
+ 1f0:	c0418593          	addi	a1,gp,-1020 # 20000000 <ticks>
+ 1f4:	c0418613          	addi	a2,gp,-1020 # 20000000 <ticks>
+ 1f8:	00c58863          	beq	a1,a2,208 <handle_reset+0x60>
+ 1fc:	4114                	lw	a3,0(a0)
+ 1fe:	c194                	sw	a3,0(a1)
+ 200:	0511                	addi	a0,a0,4
+ 202:	0591                	addi	a1,a1,4
+ 204:	fec59ae3          	bne	a1,a2,1f8 <handle_reset+0x50>
+: : : "a0", "a1", "a2", "a3", "memory"
+#endif
+);
+
+#if defined( FUNCONF_SYSTICK_USE_HCLK ) && FUNCONF_SYSTICK_USE_HCLK
+	SysTick->CTLR = 5;
+ 208:	e000f7b7          	lui	a5,0xe000f
+ 20c:	4715                	li	a4,5
+ 20e:	c398                	sw	a4,0(a5)
+#else
+	SysTick->CTLR = 1;
+#endif
+
+	// set mepc to be main as the root app.
+asm volatile(
+ 210:	2ca00793          	li	a5,714
+ 214:	34179073          	csrw	mepc,a5
+ 218:	30200073          	mret
+
+0000021c <ADC1_2_IRQHandler>:
+
+// Return the Machine Exception Program Register (MEPC)
+static inline uint32_t __get_MEPC(void)
+{
+	uint32_t result;
+	__ASM volatile( ADD_ARCH_ZICSR "csrr %0," "mepc" : "=r"(result));
+ 21c:	34102573          	csrr	a0,mepc
+	PrintHex( __get_MEPC() ); // "addr2line -e debugprintfdemo.elf 0x000007e6" ---> debugprintfdemo.c:45
+ 220:	3dfd                	jal	11e <PrintHex>
+	__ASM volatile( ADD_ARCH_ZICSR "csrr %0, mstatus": "=r"(result) );
+ 222:	30002573          	csrr	a0,mstatus
+	PrintHex( __get_MSTATUS() );
+ 226:	3de5                	jal	11e <PrintHex>
+
+// Return the Machine Trap Value Register (MTVAL)
+static inline uint32_t __get_MTVAL(void)
+{
+	uint32_t result;
+	__ASM volatile( ADD_ARCH_ZICSR "csrr %0," "mtval" : "=r" (result) );
+ 228:	34302573          	csrr	a0,mtval
+	PrintHex( __get_MTVAL() );
+ 22c:	3dcd                	jal	11e <PrintHex>
+	__ASM volatile( ADD_ARCH_ZICSR "csrr %0," "mcause": "=r"(result));
+ 22e:	34202573          	csrr	a0,mcause
+	PrintHex( __get_MCAUSE() );
+ 232:	35f5                	jal	11e <PrintHex>
+	while( (*DMDATA0) & 0x80 );
+ 234:	e00007b7          	lui	a5,0xe0000
+ 238:	0f478793          	addi	a5,a5,244 # e00000f4 <_eusrstack+0xbffff8f4>
+ 23c:	4398                	lw	a4,0(a5)
+ 23e:	08077713          	andi	a4,a4,128
+ 242:	ff6d                	bnez	a4,23c <ADC1_2_IRQHandler+0x20>
+	*DMDATA0 = 0x0a85;
+ 244:	6705                	lui	a4,0x1
+ 246:	a8570713          	addi	a4,a4,-1403 # a85 <_data_lma+0x5f5>
+ 24a:	c398                	sw	a4,0(a5)
+	while( (*DMDATA0) & 0x80 );
+ 24c:	e00007b7          	lui	a5,0xe0000
+ 250:	0f478793          	addi	a5,a5,244 # e00000f4 <_eusrstack+0xbffff8f4>
+ 254:	4398                	lw	a4,0(a5)
+ 256:	08077713          	andi	a4,a4,128
+ 25a:	ff6d                	bnez	a4,254 <ADC1_2_IRQHandler+0x38>
+	*DMDATA0 = 0xaaaaaa83;
+ 25c:	aaaab737          	lui	a4,0xaaaab
+ 260:	a8370713          	addi	a4,a4,-1405 # aaaaaa83 <_eusrstack+0x8aaaa283>
+ 264:	c398                	sw	a4,0(a5)
+	asm volatile( "1: j 1b" );
+ 266:	a001                	j	266 <ADC1_2_IRQHandler+0x4a>
+
+00000268 <NMI_Handler>:
+	RCC->INTR |= RCC_CSSC;	// clear the clock security int flag
+ 268:	40021737          	lui	a4,0x40021
+ 26c:	471c                	lw	a5,8(a4)
+ 26e:	008006b7          	lui	a3,0x800
+ 272:	8fd5                	or	a5,a5,a3
+ 274:	c71c                	sw	a5,8(a4)
+
+00000276 <SystemInit>:
+//#define BASE_CTLR	(((FUNCONF_HSITRIM) << 3) | HSEBYP | RCC_CSS)	// disable HSI in HSE modes
+
+	// Flash latency settings.
+#if defined(CH32V003)
+	#if FUNCONF_SYSTEM_CORE_CLOCK > 25000000
+		FLASH->ACTLR = FLASH_ACTLR_LATENCY_1;               // +1 Cycle Latency
+ 276:	400227b7          	lui	a5,0x40022
+ 27a:	4705                	li	a4,1
+ 27c:	c398                	sw	a4,0(a5)
+#elif defined(FUNCONF_USE_HSI) && FUNCONF_USE_HSI
+	#if defined(CH32V30x) || defined(CH32V20x) || defined(CH32L103) || defined(CH32V10x)
+		EXTEN->EXTEN_CTR |= EXTEN_PLL_HSI_PRE;
+	#endif
+	#if defined(FUNCONF_USE_PLL) && FUNCONF_USE_PLL
+		RCC->CFGR0 = BASE_CFGR0;
+ 27e:	400217b7          	lui	a5,0x40021
+		RCC->CTLR  = BASE_CTLR | RCC_HSION | RCC_PLLON; 			// Use HSI, enable PLL.
+ 282:	01080737          	lui	a4,0x1080
+		RCC->CFGR0 = BASE_CFGR0;
+ 286:	0007a223          	sw	zero,4(a5) # 40021004 <_eusrstack+0x20020804>
+		RCC->CTLR  = BASE_CTLR | RCC_HSION | RCC_PLLON; 			// Use HSI, enable PLL.
+ 28a:	08170713          	addi	a4,a4,129 # 1080081 <uart.c.355a06f6+0x107d25c>
+ 28e:	c398                	sw	a4,0(a5)
+		FLASH->ACTLR = FLASH_ACTLR_LATENCY_0;
+	#endif
+#endif
+
+#ifndef CH5xx
+	RCC->INTR  = 0x009F0000;                               // Clear PLL, CSSC, HSE, HSI and LSI ready flags.
+ 290:	009f0737          	lui	a4,0x9f0
+ 294:	c798                	sw	a4,8(a5)
+#endif
+
+#if defined(FUNCONF_USE_PLL) && FUNCONF_USE_PLL && !defined(CH5xx)
+	while((RCC->CTLR & RCC_PLLRDY) == 0) {};                       	// Wait till PLL is ready
+ 296:	4398                	lw	a4,0(a5)
+ 298:	00671693          	slli	a3,a4,0x6
+ 29c:	fe06dde3          	bgez	a3,296 <SystemInit+0x20>
+	#if defined(CH32H41x)
+		RCC->PLLCFGR |= RCC_SYSPLL_GATE;
+	#endif
+	uint32_t tmp32 = RCC->CFGR0 & ~(0x03);							// clr the SW
+ 2a0:	43d8                	lw	a4,4(a5)
+	RCC->CFGR0 = tmp32 | RCC_SW_PLL;                       			// Select PLL as system clock source
+	while ((RCC->CFGR0 & (uint32_t)RCC_SWS) != (uint32_t)0x08); 	// Wait till PLL is used as system clock source
+ 2a2:	400216b7          	lui	a3,0x40021
+	uint32_t tmp32 = RCC->CFGR0 & ~(0x03);							// clr the SW
+ 2a6:	9b71                	andi	a4,a4,-4
+	RCC->CFGR0 = tmp32 | RCC_SW_PLL;                       			// Select PLL as system clock source
+ 2a8:	00276713          	ori	a4,a4,2
+ 2ac:	c3d8                	sw	a4,4(a5)
+	while ((RCC->CFGR0 & (uint32_t)RCC_SWS) != (uint32_t)0x08); 	// Wait till PLL is used as system clock source
+ 2ae:	4721                	li	a4,8
+ 2b0:	42dc                	lw	a5,4(a3)
+ 2b2:	8bb1                	andi	a5,a5,12
+ 2b4:	fee79ee3          	bne	a5,a4,2b0 <SystemInit+0x3a>
+	*DMDATA1 = 0x00;
+ 2b8:	e00007b7          	lui	a5,0xe0000
+ 2bc:	0e07ac23          	sw	zero,248(a5) # e00000f8 <_eusrstack+0xbffff8f8>
+	*DMDATA0 = 0x80;
+ 2c0:	08000713          	li	a4,128
+ 2c4:	0ee7aa23          	sw	a4,244(a5)
+	SetupDebugPrintf();
+#endif
+#if defined(FUNCONF_SUPPORT_CONSTRUCTORS) && FUNCONF_SUPPORT_CONSTRUCTORS
+	CallConstructors();
+#endif
+}
+ 2c8:	8082                	ret
+
+000002ca <main>:
+#include "../library/timer.h"
+#include "../library/gpio.h"
+#include "../library/uart.h"
+
+int main(void)
+{
+ 2ca:	1101                	addi	sp,sp,-32
+ 2cc:	ce06                	sw	ra,28(sp)
+ 2ce:	cc22                	sw	s0,24(sp)
+ 2d0:	ca26                	sw	s1,20(sp)
+
+    SystemInit();
+ 2d2:	3755                	jal	276 <SystemInit>
+#include "../ch32fun/ch32fun/ch32fun.h"
+#include "../ch32fun/ch32fun/ch32v003hw.h"
+
+void gpio_init(uint8_t pin)
+{
+    RCC->APB2PCENR |= RCC_IOPDEN; // Enable clock for GPIOD
+ 2d4:	40021737          	lui	a4,0x40021
+ 2d8:	4f1c                	lw	a5,24(a4)
+
+    GPIOD->CFGLR &= ~(0xF << (pin * 4)); // Clear bits for the specified pin
+ 2da:	f1000637          	lui	a2,0xf1000
+ 2de:	167d                	addi	a2,a2,-1 # f0ffffff <_eusrstack+0xd0fff7ff>
+    RCC->APB2PCENR |= RCC_IOPDEN; // Enable clock for GPIOD
+ 2e0:	0207e793          	ori	a5,a5,32
+ 2e4:	cf1c                	sw	a5,24(a4)
+    GPIOD->CFGLR &= ~(0xF << (pin * 4)); // Clear bits for the specified pin
+ 2e6:	400117b7          	lui	a5,0x40011
+ 2ea:	40078793          	addi	a5,a5,1024 # 40011400 <_eusrstack+0x20010c00>
+ 2ee:	4394                	lw	a3,0(a5)
+ 2f0:	8ef1                	and	a3,a3,a2
+ 2f2:	c394                	sw	a3,0(a5)
+    GPIOD->CFGLR |= (0x3 << (pin * 4));  // Set bits for the specified pin
+ 2f4:	4394                	lw	a3,0(a5)
+ 2f6:	03000637          	lui	a2,0x3000
+ 2fa:	8ed1                	or	a3,a3,a2
+ 2fc:	c394                	sw	a3,0(a5)
+    RCC->APB2PCENR |= RCC_USART1EN | RCC_IOPDEN; // Bit 0 and Bit 14
+ 2fe:	4f14                	lw	a3,24(a4)
+ 300:	6611                	lui	a2,0x4
+ 302:	02060613          	addi	a2,a2,32 # 4020 <uart.c.355a06f6+0x11fb>
+ 306:	8ed1                	or	a3,a3,a2
+ 308:	cf14                	sw	a3,24(a4)
+    GPIOD->CFGLR &= ~(0xF << (5 * 4));
+ 30a:	4394                	lw	a3,0(a5)
+ 30c:	ff100637          	lui	a2,0xff100
+ 310:	167d                	addi	a2,a2,-1 # ff0fffff <_eusrstack+0xdf0ff7ff>
+ 312:	8ef1                	and	a3,a3,a2
+ 314:	c394                	sw	a3,0(a5)
+    GPIOD->CFGLR |= (0xB << (5 * 4));
+ 316:	4394                	lw	a3,0(a5)
+ 318:	00b00637          	lui	a2,0xb00
+ 31c:	8ed1                	or	a3,a3,a2
+ 31e:	c394                	sw	a3,0(a5)
+    USART1->BRR = 0x1A1;
+ 320:	400147b7          	lui	a5,0x40014
+ 324:	80078793          	addi	a5,a5,-2048 # 40013800 <_eusrstack+0x20013000>
+ 328:	1a100693          	li	a3,417
+ 32c:	c794                	sw	a3,8(a5)
+    USART1->CTLR1 |= USART_CTLR1_TE | USART_CTLR1_UE;
+ 32e:	47d4                	lw	a3,12(a5)
+ 330:	6609                	lui	a2,0x2
+ 332:	0621                	addi	a2,a2,8 # 2008 <ch32fun.c.92011189+0xe10>
+ 334:	8ed1                	or	a3,a3,a2
+ 336:	c7d4                	sw	a3,12(a5)
+void TIM2_IRQHandler(void) __attribute__((interrupt));
+
+void timer_init(void)
+{
+  // Intializing the RCC for TIM2
+  RCC->APB1PCENR |= RCC_TIM2EN;
+ 338:	4f5c                	lw	a5,28(a4)
+}
+
+// Enable Interrupt (by interrupt number)
+RV_STATIC_INLINE void NVIC_EnableIRQ(IRQn_Type IRQn)
+{
+	NVIC->IENR[((uint32_t)(IRQn) >> 5)] = (1 << ((uint32_t)(IRQn) & 0x1F));
+ 33a:	04000693          	li	a3,64
+ 33e:	0017e793          	ori	a5,a5,1
+ 342:	cf5c                	sw	a5,28(a4)
+
+  // Initialize TIM2 PSC, ARR and enable the Timer Interrupt
+  TIM2->PSC = 48 - 1;
+ 344:	400007b7          	lui	a5,0x40000
+ 348:	02f00713          	li	a4,47
+ 34c:	02e79423          	sh	a4,40(a5) # 40000028 <_eusrstack+0x1ffff828>
+  TIM2->ATRLR = 1000 - 1;
+ 350:	3e700713          	li	a4,999
+ 354:	02e79623          	sh	a4,44(a5)
+
+  TIM2->SWEVGR |= TIM_UG;
+ 358:	0147d703          	lhu	a4,20(a5)
+ 35c:	00176713          	ori	a4,a4,1
+ 360:	00e79a23          	sh	a4,20(a5)
+
+  TIM2->INTFR = 0;
+ 364:	00079823          	sh	zero,16(a5)
+
+  TIM2->DMAINTENR |= TIM_IT_Update;
+ 368:	00c7d703          	lhu	a4,12(a5)
+ 36c:	00176713          	ori	a4,a4,1
+ 370:	00e79623          	sh	a4,12(a5)
+ 374:	e000e737          	lui	a4,0xe000e
+ 378:	10d72223          	sw	a3,260(a4) # e000e104 <_eusrstack+0xc000d904>
+
+  // Enable Timer Interrupt in NVIC
+  NVIC_EnableIRQ(TIM2_IRQn);
+
+  // Start the Counter
+  TIM2->CTLR1 |= TIM_CEN;
+ 37c:	0007d703          	lhu	a4,0(a5)
+ 380:	00176713          	ori	a4,a4,1
+ 384:	00e79023          	sh	a4,0(a5)
+#ifndef __ASSEMBLER__
+
+// Enable Global Interrupt
+RV_STATIC_INLINE void __enable_irq()
+{
+	uint32_t result; __ASM volatile( ADD_ARCH_ZICSR "csrr %0," "mstatus": "=r"(result) );
+ 388:	300027f3          	csrr	a5,mstatus
+	result |= 0x88;  __ASM volatile( ADD_ARCH_ZICSR "csrw mstatus, %0" : : "r" (result) );
+ 38c:	0887e793          	ori	a5,a5,136
+ 390:	30079073          	csrw	mstatus,a5
+    uart_init(); // Initialize UART for sending time log
+    timer_init();
+
+    __enable_irq(); // Enable global interrupts
+
+    uart_send_string("VSDSquadron Mini | Firmware v1.0\r\n");
+ 394:	46400513          	li	a0,1124
+ 398:	3bd5                	jal	18c <uart_send_string>
+    GPIOD->BSHR = (1 << pin); // Clear the specified pin (active low)
+}
+
+void gpio_toggle(uint8_t pin)
+{
+    if (GPIOD->OUTDR & (1 << pin))
+ 39a:	400117b7          	lui	a5,0x40011
+ 39e:	40078793          	addi	a5,a5,1024 # 40011400 <_eusrstack+0x20010c00>
+ 3a2:	47d8                	lw	a4,12(a5)
+ 3a4:	04000693          	li	a3,64
+ 3a8:	04077713          	andi	a4,a4,64
+ 3ac:	cb15                	beqz	a4,3e0 <main+0x116>
+    GPIOD->BCR = (1 << pin); // Set the specified pin (active low)
+ 3ae:	cbd4                	sw	a3,20(a5)
+  uint32_t start = ticks;
+  while ((ticks - start) < ms)
+    ;
+}
+
+uint32_t get_tick(void) { return ticks; }
+ 3b0:	c041a703          	lw	a4,-1020(gp) # 20000000 <ticks>
+    while (1)
+    {
+        gpio_toggle(6); // Toggle LED at PIN 6
+
+        uint32_t tick = get_tick();
+        uart_send_string("Tick: ");
+ 3b4:	48800513          	li	a0,1160
+ 3b8:	c03a                	sw	a4,0(sp)
+ 3ba:	3bc9                	jal	18c <uart_send_string>
+
+void uart_send_number(uint32_t n) {
+    char buf[10];
+    int i = 0;
+    if (n == 0) { uart_send_char('0'); return; }
+ 3bc:	4702                	lw	a4,0(sp)
+ 3be:	e31d                	bnez	a4,3e4 <main+0x11a>
+ 3c0:	03000513          	li	a0,48
+ 3c4:	3b55                	jal	178 <uart_send_char>
+        uart_send_number(tick);
+        uart_send_string("\r\n");
+ 3c6:	48400513          	li	a0,1156
+ 3ca:	33c9                	jal	18c <uart_send_string>
+  uint32_t start = ticks;
+ 3cc:	c041a683          	lw	a3,-1020(gp) # 20000000 <ticks>
+  while ((ticks - start) < ms)
+ 3d0:	3e700713          	li	a4,999
+ 3d4:	c041a783          	lw	a5,-1020(gp) # 20000000 <ticks>
+ 3d8:	8f95                	sub	a5,a5,a3
+ 3da:	fef77de3          	bgeu	a4,a5,3d4 <main+0x10a>
+ 3de:	bf75                	j	39a <main+0xd0>
+    GPIOD->BSHR = (1 << pin); // Clear the specified pin (active low)
+ 3e0:	cb94                	sw	a3,16(a5)
+}
+ 3e2:	b7f9                	j	3b0 <main+0xe6>
+ 3e4:	0034                	addi	a3,sp,8
+    int i = 0;
+ 3e6:	4481                	li	s1,0
+    while (n > 0) { buf[i++] = '0' + (n % 10); n /= 10; }
+ 3e8:	45a9                	li	a1,10
+ 3ea:	853a                	mv	a0,a4
+ 3ec:	c236                	sw	a3,4(sp)
+ 3ee:	c03a                	sw	a4,0(sp)
+ 3f0:	31d5                	jal	d4 <__umodsi3>
+ 3f2:	4692                	lw	a3,4(sp)
+ 3f4:	4702                	lw	a4,0(sp)
+ 3f6:	03050513          	addi	a0,a0,48
+ 3fa:	00a68023          	sb	a0,0(a3) # 40021000 <_eusrstack+0x20020800>
+ 3fe:	45a9                	li	a1,10
+ 400:	853a                	mv	a0,a4
+ 402:	315d                	jal	a8 <__hidden___udivsi3>
+ 404:	4692                	lw	a3,4(sp)
+ 406:	4602                	lw	a2,0(sp)
+ 408:	4325                	li	t1,9
+ 40a:	0485                	addi	s1,s1,1
+ 40c:	872a                	mv	a4,a0
+ 40e:	0685                	addi	a3,a3,1
+ 410:	fcc36ce3          	bltu	t1,a2,3e8 <main+0x11e>
+    while (i--) uart_send_char(buf[i]);
+ 414:	14fd                	addi	s1,s1,-1
+ 416:	577d                	li	a4,-1
+ 418:	fae487e3          	beq	s1,a4,3c6 <main+0xfc>
+ 41c:	00848793          	addi	a5,s1,8
+ 420:	00278733          	add	a4,a5,sp
+ 424:	00074503          	lbu	a0,0(a4)
+ 428:	3b81                	jal	178 <uart_send_char>
+ 42a:	b7ed                	j	414 <main+0x14a>
+
+0000042c <TIM2_IRQHandler>:
+
+// interrupt handler for TIM2
+void TIM2_IRQHandler(void)
+{
+ 42c:	1151                	addi	sp,sp,-12
+ 42e:	c03e                	sw	a5,0(sp)
+  if (TIM2->INTFR & TIM_FLAG_Update)
+ 430:	400007b7          	lui	a5,0x40000
+{
+ 434:	c23a                	sw	a4,4(sp)
+  if (TIM2->INTFR & TIM_FLAG_Update)
+ 436:	0107d703          	lhu	a4,16(a5) # 40000010 <_eusrstack+0x1ffff810>
+{
+ 43a:	c436                	sw	a3,8(sp)
+  if (TIM2->INTFR & TIM_FLAG_Update)
+ 43c:	8b05                	andi	a4,a4,1
+ 43e:	cf09                	beqz	a4,458 <TIM2_IRQHandler+0x2c>
+  {
+    ticks++;
+ 440:	c041a703          	lw	a4,-1020(gp) # 20000000 <ticks>
+ 444:	0705                	addi	a4,a4,1
+ 446:	c0e1a223          	sw	a4,-1020(gp) # 20000000 <ticks>
+    TIM2->INTFR &= ~TIM_FLAG_Update;
+ 44a:	0107d703          	lhu	a4,16(a5)
+ 44e:	66c1                	lui	a3,0x10
+ 450:	16f9                	addi	a3,a3,-2 # fffe <uart.c.355a06f6+0xd1d9>
+ 452:	8f75                	and	a4,a4,a3
+ 454:	00e79823          	sh	a4,16(a5)
+  }
+}
+ 458:	46a2                	lw	a3,8(sp)
+ 45a:	4712                	lw	a4,4(sp)
+ 45c:	4782                	lw	a5,0(sp)
+ 45e:	0131                	addi	sp,sp,12
+ 460:	30200073          	mret
+ 464:	5356                	lw	t1,116(sp)
+ 466:	5344                	lw	s1,36(a4)
+ 468:	7571                	lui	a0,0xffffc
+ 46a:	6461                	lui	s0,0x18
+ 46c:	6f72                	.insn	2, 0x6f72
+ 46e:	206e                	.insn	2, 0x206e
+ 470:	694d                	lui	s2,0x13
+ 472:	696e                	.insn	2, 0x696e
+ 474:	7c20                	.insn	2, 0x7c20
+ 476:	4620                	lw	s0,72(a2)
+ 478:	7269                	lui	tp,0xffffa
+ 47a:	776d                	lui	a4,0xffffb
+ 47c:	7261                	lui	tp,0xffff8
+ 47e:	2065                	jal	526 <_data_lma+0x96>
+ 480:	3176                	.insn	2, 0x3176
+ 482:	302e                	.insn	2, 0x302e
+ 484:	0a0d                	addi	s4,s4,3
+ 486:	0000                	unimp
+ 488:	6954                	.insn	2, 0x6954
+ 48a:	203a6b63          	bltu	s4,gp,6a0 <_data_lma+0x210>
+	...

@@ -22,7 +22,6 @@ void gpio_clear()
     GPIOD_BSHR = (1 << LED_PIN);
 }
 
-
 // Toggle the GPIO pin
 void gpio_toggle()
 {
