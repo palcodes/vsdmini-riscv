@@ -1,13 +1,18 @@
 # VSDSquadron Mini Core
 Bespoke firmware for the CH32V003F4U6 (RISC-V) on the VSDSquadron Mini board.
 
-<img height="280" alt="image" src="./task2/blinky.gif" />
-
 ## Hardware
 
 - MCU: CH32V003F4U6 (48MHz, 2KB SRAM, 16KB flash)
 - Programmer: WCH-LinkE (onboard)
-- UART bridge: WCH-LinkE via ttyACM0
+- UART bridge: WCH-LinkE via ttyACM0  
+
+<br>
+    
+<p float="left">
+<img height="280" alt="image" src="task3/submission/media/physical-timer-led.gif" />
+<img height="280" alt="image" src="./task2/blinky.gif" />
+</p>
 
 ## Build
 
@@ -19,7 +24,7 @@ make flash
 ## Monitor
 
 ```bash
-screen /dev/ttyACM0 38400
+screen /dev/ttyACM0 115200
 ```
 
 ## Toolchain
