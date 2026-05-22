@@ -4,8 +4,7 @@
 static volatile uint32_t ticks = 0;
 void TIM2_IRQHandler(void) __attribute__((interrupt));
 
-void timer_init(void)
-{
+void timer_init(void) {
   // Intializing the RCC for TIM2
   RCC->APB1PCENR |= RCC_TIM2EN;
 
@@ -26,8 +25,7 @@ void timer_init(void)
   TIM2->CTLR1 |= TIM_CEN;
 }
 
-void delay_ms(uint32_t ms)
-{
+void delay_ms(uint32_t ms) {
   uint32_t start = ticks;
   while ((ticks - start) < ms)
     ;
@@ -36,10 +34,8 @@ void delay_ms(uint32_t ms)
 uint32_t get_tick(void) { return ticks; }
 
 // interrupt handler for TIM2
-void TIM2_IRQHandler(void)
-{
-  if (TIM2->INTFR & TIM_FLAG_Update)
-  {
+void TIM2_IRQHandler(void) {
+  if (TIM2->INTFR & TIM_FLAG_Update) {
     ticks++;
     TIM2->INTFR &= ~TIM_FLAG_Update;
   }

@@ -42,7 +42,7 @@ Disassembly of section .init:
   8c:	0000021c          	.word	0x0000021c
   90:	0000021c          	.word	0x0000021c
   94:	0000021c          	.word	0x0000021c
-  98:	0000042c          	.word	0x0000042c
+  98:	0000042a          	.word	0x0000042a
   9c:	0001                	nop
 	...
 
@@ -148,43 +148,41 @@ Disassembly of section .text:
  176:	8082                	ret
 
 00000178 <uart_send_char>:
-    USART1->CTLR1 |= USART_CTLR1_TE | USART_CTLR1_UE;
+  // Enable TE and UE in CR1
+  USART1->CTLR1 |= USART_CTLR1_TE | USART_CTLR1_UE;
 }
 
-void uart_send_char(char c)
-{
-    while (!(USART1->STATR & USART_STATR_TXE))
+void uart_send_char(char c) {
+  while (!(USART1->STATR & USART_STATR_TXE))
  178:	400147b7          	lui	a5,0x40014
  17c:	80078793          	addi	a5,a5,-2048 # 40013800 <_eusrstack+0x20013000>
  180:	4398                	lw	a4,0(a5)
  182:	08077713          	andi	a4,a4,128
  186:	df6d                	beqz	a4,180 <uart_send_char+0x8>
-        ;
-    USART1->DATAR = c;
+    ;
+  USART1->DATAR = c;
  188:	c3c8                	sw	a0,4(a5)
 }
  18a:	8082                	ret
 
 0000018c <uart_send_string>:
 
-void uart_send_string(const char *s)
-{
+void uart_send_string(const char *s) {
  18c:	1161                	addi	sp,sp,-8
  18e:	c022                	sw	s0,0(sp)
  190:	c206                	sw	ra,4(sp)
  192:	842a                	mv	s0,a0
-    while (*s)
+  while (*s) {
  194:	00044503          	lbu	a0,0(s0)
  198:	e509                	bnez	a0,1a2 <uart_send_string+0x16>
-    {
-        uart_send_char(*s++);
-    }
+    uart_send_char(*s++);
+  }
 }
  19a:	4092                	lw	ra,4(sp)
  19c:	4402                	lw	s0,0(sp)
  19e:	0121                	addi	sp,sp,8
  1a0:	8082                	ret
-        uart_send_char(*s++);
+    uart_send_char(*s++);
  1a2:	0405                	addi	s0,s0,1
  1a4:	3fd1                	jal	178 <uart_send_char>
  1a6:	b7fd                	j	194 <uart_send_string+0x8>
@@ -201,7 +199,7 @@ void handle_reset( void )
  1b0:	20000117          	auipc	sp,0x20000
  1b4:	65010113          	addi	sp,sp,1616 # 20000800 <_eusrstack>
  1b8:	6509                	lui	a0,0x2
- 1ba:	88050513          	addi	a0,a0,-1920 # 1880 <ch32fun.c.92011189+0x688>
+ 1ba:	88050513          	addi	a0,a0,-1920 # 1880 <ch32fun.c.6e40876d+0x6b3>
  1be:	30051073          	csrw	mstatus,a0
  1c2:	468d                	li	a3,3
  1c4:	00000517          	auipc	a0,0x0
@@ -222,7 +220,7 @@ asm volatile(
  1e4:	c110                	sw	a2,0(a0)
  1e6:	0511                	addi	a0,a0,4
  1e8:	feb54ee3          	blt	a0,a1,1e4 <handle_reset+0x3c>
- 1ec:	49000513          	li	a0,1168
+ 1ec:	49800513          	li	a0,1176
  1f0:	c0418593          	addi	a1,gp,-1020 # 20000000 <ticks>
  1f4:	c0418613          	addi	a2,gp,-1020 # 20000000 <ticks>
  1f8:	00c58863          	beq	a1,a2,208 <handle_reset+0x60>
@@ -285,7 +283,7 @@ static inline uint32_t __get_MTVAL(void)
  242:	ff6d                	bnez	a4,23c <ADC1_2_IRQHandler+0x20>
 	*DMDATA0 = 0x0a85;
  244:	6705                	lui	a4,0x1
- 246:	a8570713          	addi	a4,a4,-1403 # a85 <_data_lma+0x5f5>
+ 246:	a8570713          	addi	a4,a4,-1403 # a85 <_data_lma+0x5ed>
  24a:	c398                	sw	a4,0(a5)
 	while( (*DMDATA0) & 0x80 );
  24c:	e00007b7          	lui	a5,0xe0000
@@ -330,7 +328,7 @@ static inline uint32_t __get_MTVAL(void)
 		RCC->CFGR0 = BASE_CFGR0;
  286:	0007a223          	sw	zero,4(a5) # 40021004 <_eusrstack+0x20020804>
 		RCC->CTLR  = BASE_CTLR | RCC_HSION | RCC_PLLON; 			// Use HSI, enable PLL.
- 28a:	08170713          	addi	a4,a4,129 # 1080081 <uart.c.355a06f6+0x107d25c>
+ 28a:	08170713          	addi	a4,a4,129 # 1080081 <uart.c.05886d54+0x107d2b5>
  28e:	c398                	sw	a4,0(a5)
 		FLASH->ACTLR = FLASH_ACTLR_LATENCY_0;
 	#endif
@@ -380,182 +378,173 @@ static inline uint32_t __get_MTVAL(void)
  2c8:	8082                	ret
 
 000002ca <main>:
-#include "../library/timer.h"
+
 #include "../library/gpio.h"
+#include "../library/timer.h"
 #include "../library/uart.h"
 
-int main(void)
-{
+int main(void) {
  2ca:	1101                	addi	sp,sp,-32
  2cc:	ce06                	sw	ra,28(sp)
  2ce:	cc22                	sw	s0,24(sp)
  2d0:	ca26                	sw	s1,20(sp)
 
-    SystemInit();
+  SystemInit();
  2d2:	3755                	jal	276 <SystemInit>
 #include "../ch32fun/ch32fun/ch32fun.h"
 #include "../ch32fun/ch32fun/ch32v003hw.h"
 
-void gpio_init(uint8_t pin)
-{
-    RCC->APB2PCENR |= RCC_IOPDEN; // Enable clock for GPIOD
+void gpio_init(uint8_t pin) {
+  RCC->APB2PCENR |= RCC_IOPDEN; // Enable clock for GPIOD
  2d4:	40021737          	lui	a4,0x40021
  2d8:	4f1c                	lw	a5,24(a4)
 
-    GPIOD->CFGLR &= ~(0xF << (pin * 4)); // Clear bits for the specified pin
+  GPIOD->CFGLR &= ~(0xF << (pin * 4)); // Clear bits for the specified pin
  2da:	f1000637          	lui	a2,0xf1000
  2de:	167d                	addi	a2,a2,-1 # f0ffffff <_eusrstack+0xd0fff7ff>
-    RCC->APB2PCENR |= RCC_IOPDEN; // Enable clock for GPIOD
+  RCC->APB2PCENR |= RCC_IOPDEN; // Enable clock for GPIOD
  2e0:	0207e793          	ori	a5,a5,32
  2e4:	cf1c                	sw	a5,24(a4)
-    GPIOD->CFGLR &= ~(0xF << (pin * 4)); // Clear bits for the specified pin
+  GPIOD->CFGLR &= ~(0xF << (pin * 4)); // Clear bits for the specified pin
  2e6:	400117b7          	lui	a5,0x40011
  2ea:	40078793          	addi	a5,a5,1024 # 40011400 <_eusrstack+0x20010c00>
  2ee:	4394                	lw	a3,0(a5)
- 2f0:	8ef1                	and	a3,a3,a2
- 2f2:	c394                	sw	a3,0(a5)
-    GPIOD->CFGLR |= (0x3 << (pin * 4));  // Set bits for the specified pin
- 2f4:	4394                	lw	a3,0(a5)
- 2f6:	03000637          	lui	a2,0x3000
- 2fa:	8ed1                	or	a3,a3,a2
- 2fc:	c394                	sw	a3,0(a5)
-    RCC->APB2PCENR |= RCC_USART1EN | RCC_IOPDEN; // Bit 0 and Bit 14
- 2fe:	4f14                	lw	a3,24(a4)
- 300:	6611                	lui	a2,0x4
- 302:	02060613          	addi	a2,a2,32 # 4020 <uart.c.355a06f6+0x11fb>
- 306:	8ed1                	or	a3,a3,a2
- 308:	cf14                	sw	a3,24(a4)
-    GPIOD->CFGLR &= ~(0xF << (5 * 4));
- 30a:	4394                	lw	a3,0(a5)
- 30c:	ff100637          	lui	a2,0xff100
- 310:	167d                	addi	a2,a2,-1 # ff0fffff <_eusrstack+0xdf0ff7ff>
- 312:	8ef1                	and	a3,a3,a2
- 314:	c394                	sw	a3,0(a5)
-    GPIOD->CFGLR |= (0xB << (5 * 4));
- 316:	4394                	lw	a3,0(a5)
- 318:	00b00637          	lui	a2,0xb00
- 31c:	8ed1                	or	a3,a3,a2
- 31e:	c394                	sw	a3,0(a5)
-    USART1->BRR = 0x1A1;
- 320:	400147b7          	lui	a5,0x40014
- 324:	80078793          	addi	a5,a5,-2048 # 40013800 <_eusrstack+0x20013000>
- 328:	1a100693          	li	a3,417
- 32c:	c794                	sw	a3,8(a5)
-    USART1->CTLR1 |= USART_CTLR1_TE | USART_CTLR1_UE;
- 32e:	47d4                	lw	a3,12(a5)
- 330:	6609                	lui	a2,0x2
- 332:	0621                	addi	a2,a2,8 # 2008 <ch32fun.c.92011189+0xe10>
- 334:	8ed1                	or	a3,a3,a2
- 336:	c7d4                	sw	a3,12(a5)
+  gpio_init(6); // Initialize GPIO pin 6 for the LED
+  uart_init();  // Initialize UART for sending time log
+  timer_init();
+
+
+  uart_send_string("VSDSquadron Mini | Firmware v1.0\r\n");
+ 2f0:	46400513          	li	a0,1124
+ 2f4:	8ef1                	and	a3,a3,a2
+ 2f6:	c394                	sw	a3,0(a5)
+  GPIOD->CFGLR |= (0x3 << (pin * 4));  // Set bits for the specified pin
+ 2f8:	4394                	lw	a3,0(a5)
+ 2fa:	03000637          	lui	a2,0x3000
+ 2fe:	8ed1                	or	a3,a3,a2
+ 300:	c394                	sw	a3,0(a5)
+  RCC->APB2PCENR |= RCC_USART1EN | RCC_IOPDEN; // Bit 0 and Bit 14
+ 302:	4f14                	lw	a3,24(a4)
+ 304:	6611                	lui	a2,0x4
+ 306:	02060613          	addi	a2,a2,32 # 4020 <uart.c.05886d54+0x1254>
+ 30a:	8ed1                	or	a3,a3,a2
+ 30c:	cf14                	sw	a3,24(a4)
+  GPIOD->CFGLR &= ~(0xF << (5 * 4));
+ 30e:	4394                	lw	a3,0(a5)
+ 310:	ff100637          	lui	a2,0xff100
+ 314:	167d                	addi	a2,a2,-1 # ff0fffff <_eusrstack+0xdf0ff7ff>
+ 316:	8ef1                	and	a3,a3,a2
+ 318:	c394                	sw	a3,0(a5)
+  GPIOD->CFGLR |= (0xB << (5 * 4));
+ 31a:	4394                	lw	a3,0(a5)
+ 31c:	00b00637          	lui	a2,0xb00
+ 320:	8ed1                	or	a3,a3,a2
+ 322:	c394                	sw	a3,0(a5)
+  USART1->BRR = 0x1A1;
+ 324:	400147b7          	lui	a5,0x40014
+ 328:	80078793          	addi	a5,a5,-2048 # 40013800 <_eusrstack+0x20013000>
+ 32c:	1a100693          	li	a3,417
+ 330:	c794                	sw	a3,8(a5)
+  USART1->CTLR1 |= USART_CTLR1_TE | USART_CTLR1_UE;
+ 332:	47d4                	lw	a3,12(a5)
+ 334:	6609                	lui	a2,0x2
+ 336:	0621                	addi	a2,a2,8 # 2008 <ch32fun.c.6e40876d+0xe3b>
+ 338:	8ed1                	or	a3,a3,a2
+ 33a:	c7d4                	sw	a3,12(a5)
+static volatile uint32_t ticks = 0;
 void TIM2_IRQHandler(void) __attribute__((interrupt));
 
-void timer_init(void)
-{
+void timer_init(void) {
   // Intializing the RCC for TIM2
   RCC->APB1PCENR |= RCC_TIM2EN;
- 338:	4f5c                	lw	a5,28(a4)
+ 33c:	4f5c                	lw	a5,28(a4)
 }
 
 // Enable Interrupt (by interrupt number)
 RV_STATIC_INLINE void NVIC_EnableIRQ(IRQn_Type IRQn)
 {
 	NVIC->IENR[((uint32_t)(IRQn) >> 5)] = (1 << ((uint32_t)(IRQn) & 0x1F));
- 33a:	04000693          	li	a3,64
- 33e:	0017e793          	ori	a5,a5,1
- 342:	cf5c                	sw	a5,28(a4)
+ 33e:	04000693          	li	a3,64
+ 342:	0017e793          	ori	a5,a5,1
+ 346:	cf5c                	sw	a5,28(a4)
 
   // Initialize TIM2 PSC, ARR and enable the Timer Interrupt
   TIM2->PSC = 48 - 1;
- 344:	400007b7          	lui	a5,0x40000
- 348:	02f00713          	li	a4,47
- 34c:	02e79423          	sh	a4,40(a5) # 40000028 <_eusrstack+0x1ffff828>
+ 348:	400007b7          	lui	a5,0x40000
+ 34c:	02f00713          	li	a4,47
+ 350:	02e79423          	sh	a4,40(a5) # 40000028 <_eusrstack+0x1ffff828>
   TIM2->ATRLR = 1000 - 1;
- 350:	3e700713          	li	a4,999
- 354:	02e79623          	sh	a4,44(a5)
+ 354:	3e700713          	li	a4,999
+ 358:	02e79623          	sh	a4,44(a5)
 
   TIM2->SWEVGR |= TIM_UG;
- 358:	0147d703          	lhu	a4,20(a5)
- 35c:	00176713          	ori	a4,a4,1
- 360:	00e79a23          	sh	a4,20(a5)
+ 35c:	0147d703          	lhu	a4,20(a5)
+ 360:	00176713          	ori	a4,a4,1
+ 364:	00e79a23          	sh	a4,20(a5)
 
   TIM2->INTFR = 0;
- 364:	00079823          	sh	zero,16(a5)
+ 368:	00079823          	sh	zero,16(a5)
 
   TIM2->DMAINTENR |= TIM_IT_Update;
- 368:	00c7d703          	lhu	a4,12(a5)
- 36c:	00176713          	ori	a4,a4,1
- 370:	00e79623          	sh	a4,12(a5)
- 374:	e000e737          	lui	a4,0xe000e
- 378:	10d72223          	sw	a3,260(a4) # e000e104 <_eusrstack+0xc000d904>
+ 36c:	00c7d703          	lhu	a4,12(a5)
+ 370:	00176713          	ori	a4,a4,1
+ 374:	00e79623          	sh	a4,12(a5)
+ 378:	e000e737          	lui	a4,0xe000e
+ 37c:	10d72223          	sw	a3,260(a4) # e000e104 <_eusrstack+0xc000d904>
 
   // Enable Timer Interrupt in NVIC
   NVIC_EnableIRQ(TIM2_IRQn);
 
   // Start the Counter
   TIM2->CTLR1 |= TIM_CEN;
- 37c:	0007d703          	lhu	a4,0(a5)
- 380:	00176713          	ori	a4,a4,1
- 384:	00e79023          	sh	a4,0(a5)
-#ifndef __ASSEMBLER__
-
-// Enable Global Interrupt
-RV_STATIC_INLINE void __enable_irq()
-{
-	uint32_t result; __ASM volatile( ADD_ARCH_ZICSR "csrr %0," "mstatus": "=r"(result) );
- 388:	300027f3          	csrr	a5,mstatus
-	result |= 0x88;  __ASM volatile( ADD_ARCH_ZICSR "csrw mstatus, %0" : : "r" (result) );
- 38c:	0887e793          	ori	a5,a5,136
- 390:	30079073          	csrw	mstatus,a5
-    uart_init(); // Initialize UART for sending time log
-    timer_init();
-
-    __enable_irq(); // Enable global interrupts
-
-    uart_send_string("VSDSquadron Mini | Firmware v1.0\r\n");
- 394:	46400513          	li	a0,1124
- 398:	3bd5                	jal	18c <uart_send_string>
-    GPIOD->BSHR = (1 << pin); // Clear the specified pin (active low)
+ 380:	0007d703          	lhu	a4,0(a5)
+ 384:	00176713          	ori	a4,a4,1
+ 388:	00e79023          	sh	a4,0(a5)
+ 38c:	3501                	jal	18c <uart_send_string>
+void gpio_clear(uint8_t pin) {
+  GPIOD->BSHR = (1 << pin); // Clear the specified pin (active low)
 }
 
-void gpio_toggle(uint8_t pin)
-{
-    if (GPIOD->OUTDR & (1 << pin))
- 39a:	400117b7          	lui	a5,0x40011
- 39e:	40078793          	addi	a5,a5,1024 # 40011400 <_eusrstack+0x20010c00>
- 3a2:	47d8                	lw	a4,12(a5)
- 3a4:	04000693          	li	a3,64
- 3a8:	04077713          	andi	a4,a4,64
- 3ac:	cb15                	beqz	a4,3e0 <main+0x116>
-    GPIOD->BCR = (1 << pin); // Set the specified pin (active low)
- 3ae:	cbd4                	sw	a3,20(a5)
+void gpio_toggle(uint8_t pin) {
+  if (GPIOD->OUTDR & (1 << pin)) {
+ 38e:	400117b7          	lui	a5,0x40011
+ 392:	40078793          	addi	a5,a5,1024 # 40011400 <_eusrstack+0x20010c00>
+ 396:	47d8                	lw	a4,12(a5)
+ 398:	04000693          	li	a3,64
+ 39c:	04077713          	andi	a4,a4,64
+ 3a0:	c321                	beqz	a4,3e0 <main+0x116>
+  GPIOD->BCR = (1 << pin); // Set the specified pin (active low)
+ 3a2:	cbd4                	sw	a3,20(a5)
+
+  while (1) {
+    gpio_toggle(6);
+    uart_send_string("Uptime: ");
+ 3a4:	48800513          	li	a0,1160
+ 3a8:	33d5                	jal	18c <uart_send_string>
   uint32_t start = ticks;
   while ((ticks - start) < ms)
     ;
 }
 
 uint32_t get_tick(void) { return ticks; }
- 3b0:	c041a703          	lw	a4,-1020(gp) # 20000000 <ticks>
-    while (1)
-    {
-        gpio_toggle(6); // Toggle LED at PIN 6
-
-        uint32_t tick = get_tick();
-        uart_send_string("Tick: ");
- 3b4:	48800513          	li	a0,1160
- 3b8:	c03a                	sw	a4,0(sp)
- 3ba:	3bc9                	jal	18c <uart_send_string>
+ 3aa:	c041a483          	lw	s1,-1020(gp) # 20000000 <ticks>
+    uart_send_number(get_tick() / 1000);
+ 3ae:	3e800593          	li	a1,1000
+ 3b2:	8526                	mv	a0,s1
+ 3b4:	39d5                	jal	a8 <__hidden___udivsi3>
 
 void uart_send_number(uint32_t n) {
-    char buf[10];
-    int i = 0;
-    if (n == 0) { uart_send_char('0'); return; }
- 3bc:	4702                	lw	a4,0(sp)
- 3be:	e31d                	bnez	a4,3e4 <main+0x11a>
+  char buf[10];
+  int i = 0;
+  if (n == 0) {
+ 3b6:	3e700713          	li	a4,999
+ 3ba:	87aa                	mv	a5,a0
+ 3bc:	02976463          	bltu	a4,s1,3e4 <main+0x11a>
+    uart_send_char('0');
  3c0:	03000513          	li	a0,48
  3c4:	3b55                	jal	178 <uart_send_char>
-        uart_send_number(tick);
-        uart_send_string("\r\n");
- 3c6:	48400513          	li	a0,1156
+    uart_send_string("s\r\n");
+ 3c6:	49400513          	li	a0,1172
  3ca:	33c9                	jal	18c <uart_send_string>
   uint32_t start = ticks;
  3cc:	c041a683          	lw	a3,-1020(gp) # 20000000 <ticks>
@@ -564,80 +553,89 @@ void uart_send_number(uint32_t n) {
  3d4:	c041a783          	lw	a5,-1020(gp) # 20000000 <ticks>
  3d8:	8f95                	sub	a5,a5,a3
  3da:	fef77de3          	bgeu	a4,a5,3d4 <main+0x10a>
- 3de:	bf75                	j	39a <main+0xd0>
-    GPIOD->BSHR = (1 << pin); // Clear the specified pin (active low)
+ 3de:	bf45                	j	38e <main+0xc4>
+  GPIOD->BSHR = (1 << pin); // Clear the specified pin (active low)
  3e0:	cb94                	sw	a3,16(a5)
 }
- 3e2:	b7f9                	j	3b0 <main+0xe6>
+ 3e2:	b7c9                	j	3a4 <main+0xda>
  3e4:	0034                	addi	a3,sp,8
-    int i = 0;
+  int i = 0;
  3e6:	4481                	li	s1,0
-    while (n > 0) { buf[i++] = '0' + (n % 10); n /= 10; }
+    return;
+  }
+  while (n > 0) {
+    buf[i++] = '0' + (n % 10);
  3e8:	45a9                	li	a1,10
- 3ea:	853a                	mv	a0,a4
+ 3ea:	853e                	mv	a0,a5
  3ec:	c236                	sw	a3,4(sp)
- 3ee:	c03a                	sw	a4,0(sp)
+ 3ee:	c03e                	sw	a5,0(sp)
  3f0:	31d5                	jal	d4 <__umodsi3>
  3f2:	4692                	lw	a3,4(sp)
- 3f4:	4702                	lw	a4,0(sp)
+ 3f4:	4782                	lw	a5,0(sp)
  3f6:	03050513          	addi	a0,a0,48
  3fa:	00a68023          	sb	a0,0(a3) # 40021000 <_eusrstack+0x20020800>
+    n /= 10;
  3fe:	45a9                	li	a1,10
- 400:	853a                	mv	a0,a4
+ 400:	853e                	mv	a0,a5
  402:	315d                	jal	a8 <__hidden___udivsi3>
+  while (n > 0) {
  404:	4692                	lw	a3,4(sp)
  406:	4602                	lw	a2,0(sp)
  408:	4325                	li	t1,9
+    buf[i++] = '0' + (n % 10);
  40a:	0485                	addi	s1,s1,1
- 40c:	872a                	mv	a4,a0
+    n /= 10;
+ 40c:	87aa                	mv	a5,a0
+  while (n > 0) {
  40e:	0685                	addi	a3,a3,1
  410:	fcc36ce3          	bltu	t1,a2,3e8 <main+0x11e>
-    while (i--) uart_send_char(buf[i]);
+  }
+  while (i--)
  414:	14fd                	addi	s1,s1,-1
- 416:	577d                	li	a4,-1
- 418:	fae487e3          	beq	s1,a4,3c6 <main+0xfc>
+ 416:	57fd                	li	a5,-1
+ 418:	faf487e3          	beq	s1,a5,3c6 <main+0xfc>
+    uart_send_char(buf[i]);
  41c:	00848793          	addi	a5,s1,8
- 420:	00278733          	add	a4,a5,sp
- 424:	00074503          	lbu	a0,0(a4)
- 428:	3b81                	jal	178 <uart_send_char>
- 42a:	b7ed                	j	414 <main+0x14a>
+ 420:	978a                	add	a5,a5,sp
+ 422:	0007c503          	lbu	a0,0(a5)
+ 426:	3b89                	jal	178 <uart_send_char>
+ 428:	b7f5                	j	414 <main+0x14a>
 
-0000042c <TIM2_IRQHandler>:
+0000042a <TIM2_IRQHandler>:
 
 // interrupt handler for TIM2
-void TIM2_IRQHandler(void)
-{
- 42c:	1151                	addi	sp,sp,-12
- 42e:	c03e                	sw	a5,0(sp)
-  if (TIM2->INTFR & TIM_FLAG_Update)
- 430:	400007b7          	lui	a5,0x40000
-{
- 434:	c23a                	sw	a4,4(sp)
-  if (TIM2->INTFR & TIM_FLAG_Update)
- 436:	0107d703          	lhu	a4,16(a5) # 40000010 <_eusrstack+0x1ffff810>
-{
- 43a:	c436                	sw	a3,8(sp)
-  if (TIM2->INTFR & TIM_FLAG_Update)
- 43c:	8b05                	andi	a4,a4,1
- 43e:	cf09                	beqz	a4,458 <TIM2_IRQHandler+0x2c>
-  {
+void TIM2_IRQHandler(void) {
+ 42a:	1151                	addi	sp,sp,-12
+ 42c:	c03e                	sw	a5,0(sp)
+  if (TIM2->INTFR & TIM_FLAG_Update) {
+ 42e:	400007b7          	lui	a5,0x40000
+void TIM2_IRQHandler(void) {
+ 432:	c23a                	sw	a4,4(sp)
+  if (TIM2->INTFR & TIM_FLAG_Update) {
+ 434:	0107d703          	lhu	a4,16(a5) # 40000010 <_eusrstack+0x1ffff810>
+void TIM2_IRQHandler(void) {
+ 438:	c436                	sw	a3,8(sp)
+  if (TIM2->INTFR & TIM_FLAG_Update) {
+ 43a:	8b05                	andi	a4,a4,1
+ 43c:	cf09                	beqz	a4,456 <TIM2_IRQHandler+0x2c>
     ticks++;
- 440:	c041a703          	lw	a4,-1020(gp) # 20000000 <ticks>
- 444:	0705                	addi	a4,a4,1
- 446:	c0e1a223          	sw	a4,-1020(gp) # 20000000 <ticks>
+ 43e:	c041a703          	lw	a4,-1020(gp) # 20000000 <ticks>
+ 442:	0705                	addi	a4,a4,1
+ 444:	c0e1a223          	sw	a4,-1020(gp) # 20000000 <ticks>
     TIM2->INTFR &= ~TIM_FLAG_Update;
- 44a:	0107d703          	lhu	a4,16(a5)
- 44e:	66c1                	lui	a3,0x10
- 450:	16f9                	addi	a3,a3,-2 # fffe <uart.c.355a06f6+0xd1d9>
- 452:	8f75                	and	a4,a4,a3
- 454:	00e79823          	sh	a4,16(a5)
+ 448:	0107d703          	lhu	a4,16(a5)
+ 44c:	66c1                	lui	a3,0x10
+ 44e:	16f9                	addi	a3,a3,-2 # fffe <uart.c.05886d54+0xd232>
+ 450:	8f75                	and	a4,a4,a3
+ 452:	00e79823          	sh	a4,16(a5)
   }
 }
- 458:	46a2                	lw	a3,8(sp)
- 45a:	4712                	lw	a4,4(sp)
- 45c:	4782                	lw	a5,0(sp)
- 45e:	0131                	addi	sp,sp,12
- 460:	30200073          	mret
+ 456:	46a2                	lw	a3,8(sp)
+ 458:	4712                	lw	a4,4(sp)
+ 45a:	4782                	lw	a5,0(sp)
+ 45c:	0131                	addi	sp,sp,12
+ 45e:	30200073          	mret
+ 462:	0000                	unimp
  464:	5356                	lw	t1,116(sp)
  466:	5344                	lw	s1,36(a4)
  468:	7571                	lui	a0,0xffffc
@@ -651,11 +649,15 @@ void TIM2_IRQHandler(void)
  478:	7269                	lui	tp,0xffffa
  47a:	776d                	lui	a4,0xffffb
  47c:	7261                	lui	tp,0xffff8
- 47e:	2065                	jal	526 <_data_lma+0x96>
+ 47e:	2065                	jal	526 <_data_lma+0x8e>
  480:	3176                	.insn	2, 0x3176
  482:	302e                	.insn	2, 0x302e
  484:	0a0d                	addi	s4,s4,3
  486:	0000                	unimp
- 488:	6954                	.insn	2, 0x6954
- 48a:	203a6b63          	bltu	s4,gp,6a0 <_data_lma+0x210>
-	...
+ 488:	7055                	c.lui	zero,0xffff5
+ 48a:	6974                	.insn	2, 0x6974
+ 48c:	656d                	lui	a0,0x1b
+ 48e:	203a                	.insn	2, 0x203a
+ 490:	0000                	unimp
+ 492:	0000                	unimp
+ 494:	000a0d73          	.insn	4, 0x000a0d73

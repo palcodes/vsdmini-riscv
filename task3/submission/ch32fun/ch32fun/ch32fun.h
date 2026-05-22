@@ -4,7 +4,7 @@
 #ifndef __CH32FUN_H
 #define __CH32FUN_H
 
-#include "../../../task3/library/funconfig.h"
+#include "../../library/funconfig.h"
 
 /*****************************************************************************
 	CH32V003 BASICS
