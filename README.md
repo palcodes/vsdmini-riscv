@@ -8,6 +8,8 @@ Bespoke firmware for the CH32V003F4U6 (RISC-V) on the VSDSquadron Mini board.
 - UART bridge: WCH-LinkE via ttyACM0  
 
 <br>
+
+<img height="400" alt="image" src="task4/submission/media/uart_console_scrncast.gif" />
     
 <p float="left">
 <img height="280" alt="image" src="task3/submission/media/physical-timer-led.gif" />
