@@ -51,7 +51,8 @@ Commands:
 
 ## 2. Hardware Proof
 
-> **TODO [INSERT PHOTO/VIDEO] here** 
+<img height="380" alt="image" src="submission/media/led_vid.gif" />
+
 > - External LED wired to PD4 via breadboard
 > - LED visibly on or blinking
 > - USB-C connected to host machine
