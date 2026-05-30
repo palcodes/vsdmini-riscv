@@ -1,81 +1,46 @@
-#ifndef UART_H
-#define UART_H
+#ifndef TIMER_H
+#define TIMER_H
 
 #include <stdint.h>
 
 /**
- * @brief Initializes USART1 for 115200 8N1 communication.
+ * @brief Configures TIM2 to generate a 1 ms update interrupt.
  *
- * Enables RCC clocks for USART1 and GPIOD. Configures PD5 as
- * alternate-function push-pull (TX) and PD6 as floating input (RX).
- * Sets baud rate register for 115200 at system clock. Enables TX and RX.
+ * Enables RCC clock for TIM2, sets prescaler and auto-reload register
+ * for a 1 ms period at system clock, enables the update interrupt (UIE)
+ * in TIM2->DMAINTENR, registers the IRQ in the PFIC, and starts the counter.
  *
  * @return void
  *
- * @note Must be called before any other uart_* function.
+ * @note Must be called before delay_ms() or get_tick(). Call once at startup.
  */
-void uart_init(void);
+void timer_init(void);
 
 /**
- * @brief Transmits a single character over USART1.
+ * @brief Blocking delay using the TIM2 millisecond tick.
  *
- * Blocks until the TX data register is empty (TXE flag set),
- * then writes @p c to USART1->DATAR.
+ * Records get_tick() at entry and spins until the elapsed count reaches @p ms.
+ * Other ISRs (including TIM2 itself) continue to fire during the wait.
  *
- * @param c  Character to transmit.
- * @return   void
+ * @param ms  Delay duration in milliseconds.
+ * @return    void
  *
- * @note Blocking. Do not call from an ISR context.
+ * @note Blocking — do not call from an ISR context.
+ *       Requires timer_init() to have been called first.
+ *       Rollover-safe for durations well under ~49 days.
  */
-void uart_send_char(char c);
+void delay_ms(uint32_t ms);
 
 /**
- * @brief Transmits a null-terminated string over USART1.
+ * @brief Returns milliseconds elapsed since timer_init() was called.
  *
- * Iterates over @p s and calls uart_send_char() for each byte.
- * Stops at the null terminator.
+ * Reads a volatile uint32_t counter incremented by the TIM2 update ISR.
+ * No critical section is required for a 32-bit aligned read on RV32EC.
  *
- * @param s  Pointer to null-terminated string. Must not be NULL.
- * @return   void
+ * @return  Millisecond tick count as uint32_t.
  *
- * @note Blocking. String must be null-terminated.
+ * @note Rolls over after ~49.7 days. Not a concern for this application.
  */
-void uart_send_string(const char *s);
-
-/**
- * @brief Transmits a 32-bit unsigned integer as a decimal ASCII string.
- *
- * Converts @p n to decimal digits and transmits them most-significant first.
- * Handles n == 0 as a special case (transmits "0"). Does not append newline.
- *
- * @param n  Unsigned 32-bit value to transmit.
- * @return   void
- *
- * @note Blocking. No trailing newline or whitespace is added.
- */
-void uart_send_number(uint32_t n);
-
-/**
- * @brief Blocks until a character is received and returns it.
- *
- * Polls the RXNE flag on USART1->STATR. Reads from USART1->DATAR.
- * Normalizes '\r' to '\n' for cross-platform terminal compatibility.
- *
- * @return  Received character. '\r' is returned as '\n'.
- *
- * @note Blocking indefinitely. Not suitable for timeout-sensitive paths.
- */
-char uart_read_char(void);
-
-/**
- * @brief Non-blocking check for pending received data.
- *
- * Reads the RXNE bit from USART1->STATR. Does not consume the byte.
- *
- * @return  1 if data is available in the RX register, 0 otherwise.
- *
- * @note Follow with uart_read_char() to fetch the pending byte.
- */
-uint8_t uart_data_ready(void);
+uint32_t get_tick(void);
 
 #endif
